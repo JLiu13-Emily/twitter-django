@@ -5,12 +5,13 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from accounts.api.serializers import UserSerializer
-from django.contrib.auth import(
+from django.contrib.auth import (
     authenticate as django_authenticate,
     login as django_login,
     logout as django_logout,
 )
 from accounts.api.serializers import SignupSerializer, LoginSerializer
+
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -19,6 +20,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
 
 class AccountViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
@@ -67,7 +69,7 @@ class AccountViewSet(viewsets.ViewSet):
         })
 
     @action(methods=['GET'], detail=False)
-    def login_status(self,request):
+    def login_status(self, request):
         data = {'has_logged_in': request.user.is_authenticated}
         if request.user.is_authenticated:
             data['user'] = UserSerializer(request.user).data
