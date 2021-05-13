@@ -1,15 +1,22 @@
 from rest_framework import serializers, exceptions
 from django.contrib.auth.models import User
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email')
 
+
 class UserSerializerForTweet(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id','username')
+        fields = ('id', 'username')
+
+
+class UserSerializerForFriendship(UserSerializerForTweet):
+    pass
+
 
 class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=20, min_length=6)
@@ -30,6 +37,7 @@ class SignupSerializer(serializers.ModelSerializer):
                 'message': 'This email address has been occupied.'
             })
         return data
+
     def create(self, validated_data):
         username = validated_data['username'].lower()
         email = validated_data['email'].lower()
@@ -41,6 +49,7 @@ class SignupSerializer(serializers.ModelSerializer):
             password=password,
         )
         return user
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
