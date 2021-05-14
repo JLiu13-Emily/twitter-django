@@ -6,7 +6,7 @@ from newsfeeds.models import NewsFeed
 from newsfeeds.api.serializers import NewsFeedSerializer
 
 
-class NewsFeedViewSet(viewsets.GenericViewset):
+class NewsFeedViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):

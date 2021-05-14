@@ -1,5 +1,6 @@
 from friendships.models import Friendship
 
+
 class FriendshipService(object):
 
     @classmethod
