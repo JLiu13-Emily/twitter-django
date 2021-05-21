@@ -1,7 +1,10 @@
-from testing.testcases import TestCase
+from comments.models import Comment
+from django.utils import timezone
 from rest_framework.test import APIClient
+from testing.testcases import TestCase
 
 COMMENT_URL = '/api/comments/'
+COMMENT_DETAIL_URL = '/api/comments/{}/'
 
 class CommentApiTests(TestCase):
 
@@ -49,8 +52,7 @@ class CommentApiTests(TestCase):
         self.assertEqual(response.data['user']['id'], self.linghu.id)
         self.assertEqual(response.data['tweet_id'], self.tweet.id)
         self.assertEqual(response.data['content'], '1')
-<<<<<<< Updated upstream
-=======
+
 
     def test_destroy(self):
         comment = self.create_comment(self.linghu, self.tweet)
@@ -102,7 +104,6 @@ class CommentApiTests(TestCase):
         self.assertEqual(comment.created_at, before_created_at)
         self.assertNotEqual(comment.created_at, now)
         self.assertNotEqual(comment.updated_at, before_updated_at)
-
     def test_list(self):
         # 必须带 tweet_id
         response = self.anonymous_client.get(COMMENT_URL)
@@ -133,4 +134,3 @@ class CommentApiTests(TestCase):
             'user_id': self.linghu.id,
         })
         self.assertEqual(len(response.data['comments']), 2)
->>>>>>> Stashed changes
