@@ -19,6 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'updated_at',
         )
 
+
 class CommentSerializerForCreate(serializers.ModelSerializer):
     # 这两项必须手动添加
     # 因为默认 ModelSerializer 里只会自动包含 user 和 tweet 而不是 user_id 和 tweet_id
@@ -43,3 +44,15 @@ class CommentSerializerForCreate(serializers.ModelSerializer):
             tweet_id=validated_data['tweet_id'],
             content=validated_data['content'],
         )
+
+
+class CommentSerializerForUpdate(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('content',)
+
+    def update(self, instance, validated_data):
+        instance.content = validated_data['content']
+        instance.save()
+        # update 方法要求 return 修改后的 instance 作为返回值
+        return instance
