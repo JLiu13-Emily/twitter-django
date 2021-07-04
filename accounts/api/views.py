@@ -1,16 +1,23 @@
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from accounts.api.serializers import (
+    LoginSerializer,
+    SignupSerializer,
+    UserProfileSerializerForUpdate,
+    UserSerializerWithProfile,
+)
+from accounts.models import UserProfile
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from rest_framework import permissions
-from accounts.api.serializers import UserSerializer
 from django.contrib.auth import (
     authenticate as django_authenticate,
     login as django_login,
     logout as django_logout,
 )
-from accounts.api.serializers import SignupSerializer, LoginSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from rest_framework import viewsets
+from rest_framework import permissions
+from accounts.api.serializers import UserSerializer
+from utils.permissions import IsObjectOwner
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -18,8 +25,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserSerializerWithProfile
+    permission_classes = (permissions.IsAdminUser,)
 
 
 class AccountViewSet(viewsets.ViewSet):
@@ -43,7 +50,7 @@ class AccountViewSet(viewsets.ViewSet):
         return Response({
             'success': True,
             'user': UserSerializer(user).data,
-        })
+        }, status=201)
 
     @action(methods=['POST'], detail=False)
     def login(self, request):
@@ -79,3 +86,12 @@ class AccountViewSet(viewsets.ViewSet):
     def logout(self, request):
         django_logout(request)
         return Response({"success": True})
+
+
+class UserProfileViewSet(
+    viewsets.GenericViewSet,
+    viewsets.mixins.UpdateModelMixin,
+):
+    queryset = UserProfile
+    permission_classes = (permissions.IsAuthenticated, IsObjectOwner)
+    serializer_class = UserProfileSerializerForUpdate
